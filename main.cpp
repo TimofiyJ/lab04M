@@ -73,25 +73,62 @@ int main() {
     double UMatrix[3][3] = {0,0,0,0,0,0,0,0,0};
 
     for(int i=0;i<3;i++){
-        LMatrix[i][0]=Matrix[i][0];
+        LMatrix[i][0]=nMatrix[i][0];
     }
-    for(int i=1;i<3;i++){
-        UMatrix[0][i]=Matrix[0][i]/Matrix[0][0];
+    for(int i=0;i<3;i++){
+        UMatrix[0][i]=nMatrix[0][i]/nMatrix[0][0];
     }
     for(int i=0;i<3;i++){
         UMatrix[i][i]=1;
     }
-    int i=0;
-    while(i!=3){
-        i++
-    }
 
+    int i=0;
+    int j=0;
+    int oz=0;
+    while(i!=3){
+        while(j<=i && i>=1){
+            if(oz==0) {
+                j = 1;
+            }
+            double sum=0;
+            int k=0;
+            while(k<=j-1){
+                sum=sum+LMatrix[i][k]*UMatrix[k][j];
+                k++;
+            }
+            LMatrix[i][j]=nMatrix[i][j]-sum;
+            j++;
+        }
+        if(i==1){
+            j=1;
+            while(j<3) {
+                double sum = 0;
+                int k = 0;
+                while (k <= i - 1) {
+                    sum = sum + LMatrix[i][k] * UMatrix[k][j];
+                    k++;
+                }
+                UMatrix[i][j] = (1 / LMatrix[i][i]) * (nMatrix[i][j] - sum);
+                ++j;
+            }
+        }
+        if(j>i){
+            j=1;
+            oz=1;
+        }
+        i++;
+    }
+    for(int i=0;i<3;i++){
+        UMatrix[i][i]=1;
+    }
+    printf("\n \t U MATRIX \n");
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             printf("%lf ",UMatrix[i][j]);
         }
         printf("\n");
     }
+    printf("\n \t L MATRIX \n");
     printf("\n");
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
@@ -99,5 +136,13 @@ int main() {
         }
         printf("\n");
     }
+    double y1=nMatrix[0][3]/LMatrix[0][0];
+    double y2=1/LMatrix[1][1]*(nMatrix[1][3]-LMatrix[1][0]*y1);
+    double y3=1/LMatrix[2][2]*(nMatrix[2][3]-LMatrix[2][0]*y1-LMatrix[2][1]*y2);
+    double X3=y3;
+    double X2=y2-UMatrix[1][2]*X3;
+    double X1=y1-UMatrix[0][2]*X3-UMatrix[0][1]*X2;
+    printf("\nx3=%lf, x2=%lf, x1=%lf", X3,X2,X1);
+
 }
 
